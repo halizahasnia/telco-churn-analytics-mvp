@@ -6,32 +6,25 @@ Business users want to know why customers churn, which segments are riskiest, an
 
 ## 2. Architecture diagram
 
-```
-data/raw/*.csv (Kaggle CSV)
-        |
-        v
-ingest.py loads it as strings, no transform
-        |
-        v
-staging dataframe, in memory
-        |  quality_checks.py runs 5 checks here
-        |  (schema, PK uniqueness, churn domain, TotalCharges numeric, charge range)
-        v
-clean.py types and derives columns
-        |
-        v
-customers table in data/processed/telco_churn.db
-        |
-        +------------------+------------------+
-        |                                     |
-        v                                     v
-churn_model.py + insights.py          src/llm/ (sql_tool, grounding, client)
-write insights.json + churn_risk_scores         answers ad-hoc questions
-        |                                     |
-        +------------------+------------------+
-                           |
-                           v
-              Streamlit app: dashboard tab + ask tab
+```mermaid
+flowchart TD
+    A["Raw CSV<br/>data/raw/*.csv (Kaggle)"] --> B["ingest.py<br/>loads as strings, no transform"]
+    B --> C["Staging dataframe (in memory)"]
+    C --> Q["quality_checks.py<br/>5 checks: schema, PK uniqueness,<br/>churn domain, TotalCharges numeric,<br/>charge range"]
+    Q --> D["clean.py<br/>types & derives columns"]
+    D --> E[("customers table<br/>data/processed/telco_churn.db")]
+
+    E --> F["churn_model.py + insights.py<br/>writes insights.json +<br/>churn_risk_scores table"]
+    E --> G["src/llm/<br/>sql_tool · grounding · client<br/>answers ad-hoc questions"]
+
+    F --> H["Streamlit app"]
+    G --> H
+    H --> H1["Dashboard tab"]
+    H --> H2["Ask a Question tab"]
+
+    style E fill:#5AE0A7,stroke:#2E4A3F,color:#000
+    style H fill:#5AE0A7,stroke:#2E4A3F,color:#000
+    style Q fill:#1a2e25,stroke:#5AE0A7,color:#fff
 ```
 
 ## 3. Data flow

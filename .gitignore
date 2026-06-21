@@ -7,3 +7,6 @@ data/processed/*
 !data/processed/.gitkeep
 .streamlit/
 *Case_Study_Instructions*.pdf
+private/
+docs/architecture.pdf
+.DS_Store
