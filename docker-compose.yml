@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    volumes:
+      - ./data/raw:/app/data/raw
+      - ./data/processed:/app/data/processed
+    extra_hosts:
+      # lets the container reach Ollama running on the host machine via
+      # OLLAMA_BASE_URL=http://host.docker.internal:11434/v1 in .env
+      - "host.docker.internal:host-gateway"
